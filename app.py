@@ -8,40 +8,31 @@ st.set_page_config(
     initial_sidebar_state="expanded" 
 )
 
-# --- 2. AGGRESSIVE CSS LOCKDOWN ---
-# We are targeting the specific toolbar containers and the status widget
+# --- 2. SURGICAL CSS LOCKDOWN ---
+# This targets the new Streamlit header structure specifically.
 hide_st_style = """
             <style>
-            /* 1. Hide the entire top header and the 'status widget' (GitHub, Star, etc.) */
-            header, [data-testid="stHeader"], .stAppToolbar {
+            /* Hide the 3-dot menu, GitHub, Star, and 'Edit' buttons */
+            [data-testid="stToolbar"], 
+            [data-testid="stStatusWidget"], 
+            #MainMenu, 
+            header, 
+            footer {
                 visibility: hidden;
-                display: none;
+                display: none !important;
             }
             
-            /* 2. Hide the Main Menu (3 dots) */
-            #MainMenu {visibility: hidden;}
-            
-            /* 3. Hide the Footer */
-            footer {visibility: hidden;}
-            
-            /* 4. Hide the Deploy button specifically */
-            .stAppDeployButton {display:none;}
-            
-            /* 5. BRING BACK the Sidebar Toggle only */
-            /* We make sure the button to open/close is visible despite the header being gone */
-            [data-testid="stSidebarCollapsedControl"] {
+            /* The 'Deploy' button specifically */
+            .stAppDeployButton {display:none !important;}
+
+            /* Ensure the sidebar toggle stays visible and functional */
+            button[kind="header"] {
                 visibility: visible !important;
                 display: flex !important;
-                position: fixed;
-                top: 10px;
-                left: 10px;
-                z-index: 999999;
-                background-color: rgba(255, 255, 255, 0.8);
-                border-radius: 5px;
             }
 
-            /* 6. Clean up the top padding */
-            .block-container {padding-top: 2rem;}
+            /* Clean up top spacing since header is gone */
+            .block-container {padding-top: 1.5rem;}
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
@@ -86,7 +77,7 @@ with col2:
     ex1 = st.checkbox("BMI < 14 kg/m²")
     ex2 = st.checkbox("Little/no nutrition > 15 days")
 
-# Risk Level Logic
+# Logic
 risk_level = "At Risk (Standard)"
 if ex1 or ex2:
     risk_level = "Extremely High Risk"
@@ -152,14 +143,14 @@ with note_col:
     st.subheader("Clinical Notes")
     st.markdown("- Correct K+ and Mg before PO4.\n- Caution in renal impairment.")
     
-    # Toggle for Parenteral Nutrition (using full name as requested)
+    # Toggle for Parenteral Nutrition
     is_parenteral = st.toggle("Patient is on Parenteral Nutrition?")
     if is_parenteral:
         st.warning("⚠️ **Glucose:** Monitor 6-hourly (QDS).")
     else:
         st.info("ℹ️ **Glucose:** Monitor Twice Daily (BD).")
 
-# --- 6. PROFESSIONAL FOOTER ---
+# --- 6. FOOTER ---
 st.divider()
 f_col1, f_col2, f_col3 = st.columns(3)
 with f_col1:
