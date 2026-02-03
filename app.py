@@ -1,16 +1,27 @@
 import streamlit as st
 
-# Page Config
+# --- 1. PAGE CONFIG & UI OVERRIDES ---
 st.set_page_config(page_title="Refeeding Syndrome Tool", page_icon="🏥", layout="wide")
 
+# CSS to hide the hamburger menu, header (GitHub/Edit), and footer
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            header {visibility: hidden;}
+            footer {visibility: hidden;}
+            .stAppDeployButton {display:none;}
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
+# --- 2. TITLE AND SIDEBAR ---
 st.title("Adult Refeeding Syndrome Clinical Decision Support")
 st.caption("Based on Taunton and Somerset NHS Foundation Trust Guidelines")
 
-# --- SIDEBAR: REFERENCE RANGES ---
 with st.sidebar:
     st.header("Normal Reference Ranges")
     st.markdown("""
-    *Standard adult norms (may vary by lab):*
+    *Standard adult norms:*
     - **Potassium (K+):** 3.5 – 5.5 mmol/L
     - **Phosphate (PO4):** 0.8 – 1.5 mmol/L
     - **Magnesium (Mg):** 0.7 – 1.0 mmol/L
@@ -20,14 +31,14 @@ with st.sidebar:
     st.divider()
     st.write("**MDT Reminder:** A Dietitian should be involved at the earliest opportunity.")
 
-# --- STEP 1: RISK STRATIFICATION ---
+# --- 3. RISK STRATIFICATION ---
 st.header("Step 1: Risk Assessment")
 col_risk1, col_risk2 = st.columns(2)
 
 with col_risk1:
     st.subheader("High Risk Criteria")
     r1 = st.checkbox("BMI < 16 kg/m²")
-    r2 = st.checkbox("Unintentional weight loss > 15% (last 3-6 months)")
+    r2 = st.checkbox("Unintentional weight loss > 15% (3-6 months)")
     r3 = st.checkbox("Little/no nutrition > 10 days")
     r4 = st.checkbox("Low baseline K+, PO4, or Mg")
     
@@ -44,7 +55,7 @@ with col_risk2:
     ex1 = st.checkbox("BMI < 14 kg/m²")
     ex2 = st.checkbox("Little/no nutrition > 15 days")
 
-# Logic for Risk Level based on Section 3.0
+# Logic for Risk Level
 risk_level = "At Risk (Standard)"
 if ex1 or ex2:
     risk_level = "Extremely High Risk"
@@ -57,7 +68,7 @@ elif c3:
 
 st.info(f"Calculated Risk Category: **{risk_level}**")
 
-# --- STEP 2: INITIAL MANAGEMENT ---
+# --- 4. INITIAL MANAGEMENT ---
 st.header("Step 2: Initial Management Plan")
 
 if risk_level == "Extremely High Risk":
@@ -77,7 +88,7 @@ with st.expander("Mandatory Vitamin Prophylaxis (Day 1-10)", expanded=True):
     * *If IV Only:* **Pabrinex** 1 pair TDS
     """)
 
-# --- STEP 3: ELECTROLYTE REPLACEMENT ---
+# --- 5. ELECTROLYTE REPLACEMENT ---
 st.header("Step 3: Electrolyte Replacement & Monitoring")
 st.write("**Frequency:** Daily until stable, then twice weekly.")
 
@@ -102,7 +113,7 @@ with replacement_col:
         if 0.5 <= p_val < 0.7:
             st.write("**Action:** 1 tablet Phosphate-Sandoz OD.")
         elif p_val < 0.5:
-            st.write("**Action:** 2 tablets Phosphate-Sandoz OD OR IV Sodium Glycerophosphate (reduced if <45kg).")
+            st.write("**Action:** 2 tablets Phosphate-Sandoz OD OR IV Sodium Glycerophosphate.")
 
     elif analyte == "Magnesium (Mg)":
         mg_val = st.number_input("Serum Mg (mmol/L):", step=0.1, format="%.1f")
@@ -118,5 +129,12 @@ with info_col:
     - **Sequence:** Correct K+ and Mg before PO4.
     """)
 
+# --- 6. PROFESSIONAL FOOTER (VERSION CONTROL) ---
 st.divider()
-st.caption("Guidance only. Refer to Trust Policy database for current version.")
+f_col1, f_col2, f_col3 = st.columns(3)
+with f_col1:
+    st.caption("**Active Date:** 22 May 2017")
+with f_col2:
+    st.caption("**Review Date:** 22 May 2020")
+with f_col3:
+    st.caption("**Lead:** Dr Daniel Pearl & Dr Emma Wesley")
