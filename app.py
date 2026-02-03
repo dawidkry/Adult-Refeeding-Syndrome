@@ -1,6 +1,7 @@
 import streamlit as st
 
 # --- 1. PAGE CONFIG ---
+# Force the sidebar to be open (expanded) by default
 st.set_page_config(
     page_title="Refeeding Syndrome Tool", 
     page_icon="🏥", 
@@ -8,40 +9,22 @@ st.set_page_config(
     initial_sidebar_state="expanded" 
 )
 
-# --- 2. SURGICAL CSS LOCKDOWN ---
-# This targets the new Streamlit header structure specifically.
+# --- 2. MINIMAL CSS ---
+# We are ONLY hiding the 'Made with Streamlit' footer and the 'Deploy' button.
+# We are NOT hiding the sidebar or the header icons to ensure stability.
 hide_st_style = """
             <style>
-            /* Hide the 3-dot menu, GitHub, Star, and 'Edit' buttons */
-            [data-testid="stToolbar"], 
-            [data-testid="stStatusWidget"], 
-            #MainMenu, 
-            header, 
-            footer {
-                visibility: hidden;
-                display: none !important;
-            }
-            
-            /* The 'Deploy' button specifically */
-            .stAppDeployButton {display:none !important;}
-
-            /* Ensure the sidebar toggle stays visible and functional */
-            button[kind="header"] {
-                visibility: visible !important;
-                display: flex !important;
-            }
-
-            /* Clean up top spacing since header is gone */
-            .block-container {padding-top: 1.5rem;}
+            footer {visibility: hidden;}
+            .stAppDeployButton {display:none;}
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-# --- 3. SIDEBAR (Reference Ranges) ---
+# --- 3. THE SIDEBAR (Reference Ranges) ---
 with st.sidebar:
     st.header("Normal Reference Ranges")
     st.markdown("""
-    **Standard Adult Reference Ranges:**
+    *Standard adult norms:*
     - **Potassium (K+):** 3.5 – 5.5 mmol/L
     - **Phosphate (PO4):** 0.8 – 1.5 mmol/L
     - **Magnesium (Mg):** 0.7 – 1.0 mmol/L
@@ -77,7 +60,7 @@ with col2:
     ex1 = st.checkbox("BMI < 14 kg/m²")
     ex2 = st.checkbox("Little/no nutrition > 15 days")
 
-# Logic
+# Risk Level Logic
 risk_level = "At Risk (Standard)"
 if ex1 or ex2:
     risk_level = "Extremely High Risk"
@@ -101,10 +84,8 @@ else:
 with st.expander("Mandatory Vitamin Prophylaxis (Day 1-10)", expanded=True):
     st.markdown("""
     *Give first dose at least 30 mins before feeding:*
-    - **Thiamine:** 50mg QDS
-    - **Vitamin B Co Strong:** 2 tablets TDS
-    - **Forceval:** 1 capsule OD
-    - *If IV Only (Pabrinex):* 1 pair TDS
+    * **Thiamine** 50mg QDS | **Vit B Co Strong** 2 tabs TDS | **Forceval** 1 cap OD
+    * *If IV Only:* **Pabrinex** 1 pair TDS
     """)
 
 # --- STEP 3: ELECTROLYTE REPLACEMENT ---
@@ -143,14 +124,14 @@ with note_col:
     st.subheader("Clinical Notes")
     st.markdown("- Correct K+ and Mg before PO4.\n- Caution in renal impairment.")
     
-    # Toggle for Parenteral Nutrition
+    # YOUR PREFERRED SLIDER/TOGGLE
     is_parenteral = st.toggle("Patient is on Parenteral Nutrition?")
     if is_parenteral:
         st.warning("⚠️ **Glucose:** Monitor 6-hourly (QDS).")
     else:
         st.info("ℹ️ **Glucose:** Monitor Twice Daily (BD).")
 
-# --- 6. FOOTER ---
+# --- 6. PROFESSIONAL FOOTER ---
 st.divider()
 f_col1, f_col2, f_col3 = st.columns(3)
 with f_col1:
