@@ -45,3 +45,5 @@ The application logic has been cross-referenced with official Trust flowcharts t
 
 ## ⚖️ Disclaimer
 This tool is a digital reference for the Taunton and Somerset NHS Foundation Trust guidelines. It is intended for use in adult inpatient areas only and excludes Paediatrics. All clinical decisions should be made in conjunction with the multidisciplinary Nutrition Team.
+
+Copyright (c) 2026 dawidkry
