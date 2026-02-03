@@ -4,24 +4,37 @@ import streamlit as st
 st.set_page_config(page_title="Refeeding Syndrome Tool", page_icon="🏥", layout="wide")
 
 # CSS to hide the hamburger menu, header (GitHub/Edit), and footer
+# Includes minor padding adjustment for better mobile display
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
             header {visibility: hidden;}
             footer {visibility: hidden;}
             .stAppDeployButton {display:none;}
+            .block-container {padding-top: 2rem;}
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-# --- 2. TITLE AND SIDEBAR ---
+# --- 2. TITLE AND MOBILE-FRIENDLY REFERENCE ---
 st.title("Adult Refeeding Syndrome Clinical Decision Support")
 st.caption("Based on Taunton and Somerset NHS Foundation Trust Guidelines")
 
+# "Quick Reference" for mobile users who might not see the sidebar
+with st.expander("📊 View Normal Electrolyte Reference Ranges"):
+    st.markdown("""
+    *Standard adult norms:*
+    - **Potassium (K+):** 3.5 – 5.5 mmol/L
+    - **Phosphate (PO4):** 0.8 – 1.5 mmol/L
+    - **Magnesium (Mg):** 0.7 – 1.0 mmol/L
+    - **Corrected Calcium:** 2.2 – 2.6 mmol/L
+    - **Sodium (Na+):** 135 – 145 mmol/L
+    """)
+
+# Sidebar for Desktop Users
 with st.sidebar:
     st.header("Normal Reference Ranges")
     st.markdown("""
-    *Standard adult norms:*
     - **Potassium (K+):** 3.5 – 5.5 mmol/L
     - **Phosphate (PO4):** 0.8 – 1.5 mmol/L
     - **Magnesium (Mg):** 0.7 – 1.0 mmol/L
@@ -31,7 +44,7 @@ with st.sidebar:
     st.divider()
     st.write("**MDT Reminder:** A Dietitian should be involved at the earliest opportunity.")
 
-# --- 3. RISK STRATIFICATION ---
+# --- 3. RISK STRATIFICATION (Section 3.0) ---
 st.header("Step 1: Risk Assessment")
 col_risk1, col_risk2 = st.columns(2)
 
@@ -43,7 +56,7 @@ with col_risk1:
     r4 = st.checkbox("Low baseline K+, PO4, or Mg")
     
     st.write("---")
-    st.subheader("2+ Criteria Needed:")
+    st.subheader("2+ Criteria Needed (High Risk):")
     c1 = st.checkbox("BMI < 18.5 kg/m²")
     c2 = st.checkbox("Weight loss > 10% (3-6 months)")
     c3 = st.checkbox("Little/no nutrition > 5 days")
@@ -68,7 +81,7 @@ elif c3:
 
 st.info(f"Calculated Risk Category: **{risk_level}**")
 
-# --- 4. INITIAL MANAGEMENT ---
+# --- 4. INITIAL MANAGEMENT (Section 6.0) ---
 st.header("Step 2: Initial Management Plan")
 
 if risk_level == "Extremely High Risk":
@@ -85,10 +98,10 @@ with st.expander("Mandatory Vitamin Prophylaxis (Day 1-10)", expanded=True):
     * **Thiamine:** 50 mg QDS
     * **Vitamin B Co Strong:** 2 tablets TDS
     * **Forceval:** 1 capsule OD
-    * *If IV Only:* **Pabrinex** 1 pair TDS
+    * *If IV Only (Pabrinex):* 1 pair TDS
     """)
 
-# --- 5. ELECTROLYTE REPLACEMENT ---
+# --- 5. ELECTROLYTE REPLACEMENT (Charts 1, 2, & 3) ---
 st.header("Step 3: Electrolyte Replacement & Monitoring")
 st.write("**Frequency:** Daily until stable, then twice weekly.")
 
@@ -101,19 +114,23 @@ with replacement_col:
         k_val = st.number_input("Serum K+ (mmol/L):", step=0.1, format="%.1f")
         if 3.0 <= k_val < 3.5:
             st.write("**Action:** 2 tabs Sando-K TDS OR 40mmol K+ IV over 8h.")
+            st.write("**Monitoring:** Check every 24h.")
         elif 2.5 <= k_val < 3.0:
             st.write("**Action:** 2 tabs Sando-K QDS OR 40mmol K+ IV over 8h.")
+            st.write("**Monitoring:** Check every 24h.")
         elif k_val < 2.5:
             st.error("**Action:** 40mmol K+ IV over min 4 hours.")
             st.error("**CRITICAL:** Continuous ECG monitoring essential if > 20mmol/hr.")
+            st.write("**Monitoring:** Check every 12h.")
 
     elif analyte == "Phosphate (PO4)":
         p_val = st.number_input("Serum PO4 (mmol/L):", step=0.1, format="%.1f")
-        under_45 = st.checkbox("Patient weight < 45kg?")
+        under_45 = st.checkbox("Patient weight < 45kg? (50% dose reduction)")
         if 0.5 <= p_val < 0.7:
             st.write("**Action:** 1 tablet Phosphate-Sandoz OD.")
         elif p_val < 0.5:
-            st.write("**Action:** 2 tablets Phosphate-Sandoz OD OR IV Sodium Glycerophosphate.")
+            dose = "10mmol" if under_45 else "20mmol"
+            st.write(f"**Action:** 2 tablets Phosphate-Sandoz OD OR IV Glycophos ({dose}) over 8-12h.")
 
     elif analyte == "Magnesium (Mg)":
         mg_val = st.number_input("Serum Mg (mmol/L):", step=0.1, format="%.1f")
@@ -127,6 +144,7 @@ with info_col:
     st.markdown("""
     - **Glucose:** Monitor BD (PN 6-hourly).
     - **Sequence:** Correct K+ and Mg before PO4.
+    - **Renal:** Caution in renal impairment.
     """)
 
 # --- 6. PROFESSIONAL FOOTER (VERSION CONTROL) ---
