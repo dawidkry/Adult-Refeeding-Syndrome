@@ -8,24 +8,40 @@ st.set_page_config(
     initial_sidebar_state="expanded" 
 )
 
-# --- 2. ADVANCED CSS TO CLEAN HEADER ---
-# We target the specific data-testids and classes for the menu, github, and toolbar
+# --- 2. AGGRESSIVE CSS LOCKDOWN ---
+# We are targeting the specific toolbar containers and the status widget
 hide_st_style = """
             <style>
-            /* Hide the 3-dot menu and the GitHub/Share/Star toolbar */
+            /* 1. Hide the entire top header and the 'status widget' (GitHub, Star, etc.) */
+            header, [data-testid="stHeader"], .stAppToolbar {
+                visibility: hidden;
+                display: none;
+            }
+            
+            /* 2. Hide the Main Menu (3 dots) */
             #MainMenu {visibility: hidden;}
-            header {visibility: hidden;}
+            
+            /* 3. Hide the Footer */
             footer {visibility: hidden;}
+            
+            /* 4. Hide the Deploy button specifically */
             .stAppDeployButton {display:none;}
             
-            /* Adjust the block container to recover the space from the hidden header */
-            .block-container {padding-top: 1rem;}
-            
-            /* Ensure the sidebar toggle remains visible and works */
+            /* 5. BRING BACK the Sidebar Toggle only */
+            /* We make sure the button to open/close is visible despite the header being gone */
             [data-testid="stSidebarCollapsedControl"] {
-                visibility: visible;
-                color: #0e1117;
+                visibility: visible !important;
+                display: flex !important;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                z-index: 999999;
+                background-color: rgba(255, 255, 255, 0.8);
+                border-radius: 5px;
             }
+
+            /* 6. Clean up the top padding */
+            .block-container {padding-top: 2rem;}
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
@@ -34,7 +50,7 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 with st.sidebar:
     st.header("Normal Reference Ranges")
     st.markdown("""
-    *Standard adult norms (may vary by lab):*
+    **Standard Adult Reference Ranges:**
     - **Potassium (K+):** 3.5 – 5.5 mmol/L
     - **Phosphate (PO4):** 0.8 – 1.5 mmol/L
     - **Magnesium (Mg):** 0.7 – 1.0 mmol/L
@@ -94,8 +110,10 @@ else:
 with st.expander("Mandatory Vitamin Prophylaxis (Day 1-10)", expanded=True):
     st.markdown("""
     *Give first dose at least 30 mins before feeding:*
-    * **Thiamine** 50mg QDS | **Vit B Co Strong** 2 tabs TDS | **Forceval** 1 cap OD
-    * *If IV Only (Pabrinex):* 1 pair TDS
+    - **Thiamine:** 50mg QDS
+    - **Vitamin B Co Strong:** 2 tablets TDS
+    - **Forceval:** 1 capsule OD
+    - *If IV Only (Pabrinex):* 1 pair TDS
     """)
 
 # --- STEP 3: ELECTROLYTE REPLACEMENT ---
@@ -134,7 +152,7 @@ with note_col:
     st.subheader("Clinical Notes")
     st.markdown("- Correct K+ and Mg before PO4.\n- Caution in renal impairment.")
     
-    # Toggle for Parenteral Nutrition
+    # Toggle for Parenteral Nutrition (using full name as requested)
     is_parenteral = st.toggle("Patient is on Parenteral Nutrition?")
     if is_parenteral:
         st.warning("⚠️ **Glucose:** Monitor 6-hourly (QDS).")
