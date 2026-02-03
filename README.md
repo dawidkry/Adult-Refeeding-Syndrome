@@ -1,43 +1,41 @@
 # Adult Refeeding Syndrome Clinical Decision Support Tool
 
-[cite_start]An interactive clinical tool designed for medical and nursing staff to prevent, identify, and manage metabolic complications during the reintroduction of nutrition[cite: 10, 15].
+An interactive clinical application designed for medical and nursing staff to facilitate the identification, stratification, and management of metabolic complications during the reintroduction of nutrition.
 
-## 🏥 Clinical Background
-[cite_start]Refeeding Syndrome refers to serious metabolic disturbances (electrolyte shifts and fluid imbalance) that occur when nutrition is reintroduced to starved or malnourished patients[cite: 19, 25]. [cite_start]It is potentially fatal if not recognized promptly[cite: 20].
+## 🏥 Clinical Context
+Refeeding Syndrome involves serious metabolic disturbances—specifically electrolyte shifts and fluid imbalances—that occur when nutrition is reintroduced to starved or malnourished patients. This condition is potentially fatal if not recognized and managed promptly.
 
-[cite_start]This application digitizes the **Adult Refeeding Syndrome Guidelines** authored by Natalie Buck (Nutrition Specialist Dietitian) and Lead Consultants Dr. Daniel Pearl & Dr. Emma Wesley[cite: 5, 7].
+This digital tool is based on the **Adult Refeeding Syndrome Guidelines** from the Taunton and Somerset NHS Foundation Trust, led by Dr. Daniel Pearl and Dr. Emma Wesley (Consultant Gastroenterologists).
 
 ## 🚀 Key Features
 
-### 1. Automated Risk Stratification
-[cite_start]The tool processes patient data to categorize risk according to Trust criteria[cite: 43]:
-* [cite_start]**At Risk:** Little/no nutrition for >5 days[cite: 45].
-* [cite_start]**High Risk:** BMI <16, weight loss >15%, or low baseline electrolytes (K+, PO4, Mg)[cite: 48, 49, 51].
-* [cite_start]**Extremely High Risk:** BMI <14 or little/no nutrition for >15 days[cite: 59, 60].
+### 1. Risk Stratification Engine
+The tool automates the assessment of patient risk levels based on clinical criteria:
+* **At Risk:** Patients with little or no nutrition for >5 days.
+* **High Risk:** BMI <16 kg/m², weight loss >15% in 3-6 months, or low baseline electrolytes (K+, PO4, Mg).
+* **Extremely High Risk:** BMI <14 kg/m² or starvation for >15 days.
 
-### 2. Evidence-Based Feeding Protocols
-Provides specific starting regimens based on risk level:
-* [cite_start]**Extremely High Risk:** Consider starting at $5~kcal/kg/day$[cite: 79].
-* [cite_start]**High Risk:** Start at $10~kcal/kg/day$, increasing over 4–7 days[cite: 72].
-* [cite_start]**Standard Risk:** Start at max 50% of requirements for the first 2 days[cite: 65].
+### 2. Tailored Feeding Regimens
+Provides specific caloric starting points based on the calculated risk:
+* **Extremely High Risk:** Recommendations to start at $5~kcal/kg/day$.
+* **High Risk:** Start at $10~kcal/kg/day$, increasing gradually over 4–7 days.
+* **Standard Risk:** Initial feed at max 50% of requirements for the first 48 hours.
 
-### 3. Dynamic Electrolyte Replacement Logic
-[cite_start]Interactive flowcharts for correcting deficiencies[cite: 96, 122, 149, 164]:
-* [cite_start]**Potassium (K+):** Dosing for oral (Sando-K) vs. IV (40mmol infusion)[cite: 168, 171].
-* [cite_start]**Phosphate (PO4):** Dosing for Phosphate-Sandoz vs. IV Sodium Glycerophosphate[cite: 125, 137].
-* [cite_start]**Magnesium (Mg):** Oral Magnesium Hydroxide vs. IV Magnesium Sulphate[cite: 153, 155].
+### 3. Dynamic Electrolyte Management
+Interactive logic for correcting biochemical abnormalities:
+* **Potassium (K+):** Dosing protocols for oral (Sando-K) and IV infusions, including the mandatory 20 mmol/hr safety cap.
+* **Phosphate (PO4):** Guided replacement using Phosphate-Sandoz or IV Sodium Glycerophosphate.
+* **Magnesium (Mg):** Management paths for oral Magnesium Hydroxide vs. IV Magnesium Sulphate.
 
-### 4. Safety Guardrails
-* [cite_start]**Pre-feeding Vitamins:** Highlights that the first dose of vitamins must be given at least 30 minutes before feeding[cite: 110].
-* [cite_start]**Infusion Monitoring:** Critical alert for continuous ECG monitoring if K+ infusion exceeds 20 mmol/hr[cite: 185].
-* [cite_start]**Correction Hierarchy:** Reminds clinicians to correct K+ and Mg before PO4 to avoid further electrolyte drops[cite: 97, 98].
+### 4. Patient Safety & Clinical Governance
+* **Prophylaxis:** Alerts clinicians that the first dose of vitamins (Thiamine/Pabrinex) must be administered at least 30 minutes before feeding.
+* **Hierarchy of Correction:** Built-in reminders to prioritize Potassium and Magnesium correction before Phosphate to prevent secondary metabolic drops.
+* **Monitoring:** Outlines the schedule for biochemical testing (daily until stable, then twice weekly).
 
-## 🛠 Technical Setup
-This app is built with **Python** and **Streamlit**.
+## 🛠 Technical Stack
+* **Language:** Python 3.x
+* **Framework:** Streamlit
+* **Deployment:** Optimized for GitHub and Streamlit Cloud
 
-1. **Clone the repo:** `git clone https://github.com/your-username/refeeding-guidelines.git`
-2. **Install dependencies:** `pip install -r requirements.txt`
-3. **Run the app:** `streamlit run app.py`
-
-## ⚖️ Disclaimer & Governance
-[cite_start]This tool is a digital representation of the Taunton and Somerset NHS Foundation Trust guidelines[cite: 2, 3]. [cite_start]It is intended for adult inpatient areas (Excludes Paediatrics)[cite: 10, 14]. [cite_start]Clinical decisions should always involve a Dietitian and be confirmed against the Trust's active policy database[cite: 16, 21].
+## ⚖️ Disclaimer
+This tool is a digital reference for the Taunton and Somerset NHS Foundation Trust guidelines. It is intended for use in adult inpatient areas only (Excludes Paediatrics). All clinical decisions should be made in conjunction with the multidisciplinary Nutrition Team.
