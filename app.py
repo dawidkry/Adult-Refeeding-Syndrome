@@ -1,7 +1,6 @@
 import streamlit as st
 
 # --- 1. PAGE CONFIG & UI OVERRIDES ---
-# Initializing with 'collapsed' sidebar prevents the flicker on most devices
 st.set_page_config(
     page_title="Refeeding Syndrome Tool", 
     page_icon="🏥", 
@@ -9,14 +8,13 @@ st.set_page_config(
     initial_sidebar_state="collapsed" 
 )
 
-# Aggressive CSS to hide headers and menus immediately
+# Aggressive CSS to hide headers/menus and remove the sidebar toggle
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
             header {visibility: hidden;}
             footer {visibility: hidden;}
             .stAppDeployButton {display:none;}
-            /* This hides the sidebar toggle button entirely so users can't reopen it */
             [data-testid="collapsedControl"] {display: none;}
             .block-container {padding-top: 1rem;}
             </style>
@@ -27,9 +25,6 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 st.title("Adult Refeeding Syndrome Clinical Decision Support")
 st.caption("Based on Taunton and Somerset NHS Foundation Trust Guidelines")
 
-# Since we want a professional look without flickering sidebars, 
-# we'll place the reference ranges in a clean, high-visibility expander 
-# at the top of the main page instead of the sidebar.
 with st.expander("📊 View Normal Electrolyte Reference Ranges", expanded=False):
     st.markdown("""
     **Standard Adult Reference Ranges:**
@@ -66,7 +61,6 @@ with col_risk2:
     ex1 = st.checkbox("BMI < 14 kg/m²")
     ex2 = st.checkbox("Little/no nutrition > 15 days")
 
-# Logic for Risk Level
 risk_level = "At Risk (Standard)"
 if ex1 or ex2:
     risk_level = "Extremely High Risk"
@@ -137,10 +131,15 @@ with replacement_col:
 with info_col:
     st.subheader("Clinical Notes")
     st.markdown("""
-    - **Glucose:** Monitor BD (Parenteral Nutrition 6-hourly).
     - **Sequence:** Correct K+ and Mg before PO4.
     - **Renal:** Caution in renal impairment.
     """)
+    # Logic for Glucose Monitoring
+    is_parenteral = st.toggle("Patient is on Parenteral Nutrition?")
+    if is_parenteral:
+        st.warning("⚠️ **Glucose:** Monitor 6-hourly (QDS).")
+    else:
+        st.info("ℹ️ **Glucose:** Monitor Twice Daily (BD).")
 
 # --- 6. PROFESSIONAL FOOTER (VERSION CONTROL) ---
 st.divider()
