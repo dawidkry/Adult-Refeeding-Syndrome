@@ -11,7 +11,7 @@ with st.sidebar:
     st.header("Normal Reference Ranges")
     st.markdown("""
     *Standard adult norms (may vary by lab):*
-    - **Potassium (K+):** 3.5 – 5.0 mmol/L
+    - **Potassium (K+):** 3.5 – 5.5 mmol/L
     - **Phosphate (PO4):** 0.8 – 1.5 mmol/L
     - **Magnesium (Mg):** 0.7 – 1.0 mmol/L
     - **Corrected Calcium:** 2.2 – 2.6 mmol/L
