@@ -5,16 +5,18 @@ st.set_page_config(
     page_title="Refeeding Syndrome Tool", 
     page_icon="🏥", 
     layout="wide",
-    initial_sidebar_state="expanded" 
+    initial_sidebar_state="expanded"  # Sidebar is open by default
 )
 
-# CSS to hide the hamburger menu and header elements for a professional look
+# CSS to hide the hamburger menu, footer, and the "open sidebar" arrow
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
             header {visibility: hidden;}
             footer {visibility: hidden;}
             .stAppDeployButton {display:none;}
+            /* This ensures that once the sidebar is closed, the 'open' arrow is gone */
+            [data-testid="collapsedControl"] {display: none;}
             .block-container {padding-top: 2rem;}
             </style>
             """
