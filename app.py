@@ -1,7 +1,6 @@
 import streamlit as st
 
 # --- 1. PAGE CONFIG ---
-# Force the sidebar to be open (expanded) by default
 st.set_page_config(
     page_title="Refeeding Syndrome Tool", 
     page_icon="🏥", 
@@ -9,22 +8,33 @@ st.set_page_config(
     initial_sidebar_state="expanded" 
 )
 
-# --- 2. MINIMAL CSS ---
-# We are ONLY hiding the 'Made with Streamlit' footer and the 'Deploy' button.
-# We are NOT hiding the sidebar or the header icons to ensure stability.
+# --- 2. ADVANCED CSS TO CLEAN HEADER ---
+# We target the specific data-testids and classes for the menu, github, and toolbar
 hide_st_style = """
             <style>
+            /* Hide the 3-dot menu and the GitHub/Share/Star toolbar */
+            #MainMenu {visibility: hidden;}
+            header {visibility: hidden;}
             footer {visibility: hidden;}
             .stAppDeployButton {display:none;}
+            
+            /* Adjust the block container to recover the space from the hidden header */
+            .block-container {padding-top: 1rem;}
+            
+            /* Ensure the sidebar toggle remains visible and works */
+            [data-testid="stSidebarCollapsedControl"] {
+                visibility: visible;
+                color: #0e1117;
+            }
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-# --- 3. THE SIDEBAR (Reference Ranges) ---
+# --- 3. SIDEBAR (Reference Ranges) ---
 with st.sidebar:
     st.header("Normal Reference Ranges")
     st.markdown("""
-    *Standard adult norms:*
+    *Standard adult norms (may vary by lab):*
     - **Potassium (K+):** 3.5 – 5.5 mmol/L
     - **Phosphate (PO4):** 0.8 – 1.5 mmol/L
     - **Magnesium (Mg):** 0.7 – 1.0 mmol/L
@@ -85,7 +95,7 @@ with st.expander("Mandatory Vitamin Prophylaxis (Day 1-10)", expanded=True):
     st.markdown("""
     *Give first dose at least 30 mins before feeding:*
     * **Thiamine** 50mg QDS | **Vit B Co Strong** 2 tabs TDS | **Forceval** 1 cap OD
-    * *If IV Only:* **Pabrinex** 1 pair TDS
+    * *If IV Only (Pabrinex):* 1 pair TDS
     """)
 
 # --- STEP 3: ELECTROLYTE REPLACEMENT ---
@@ -124,7 +134,7 @@ with note_col:
     st.subheader("Clinical Notes")
     st.markdown("- Correct K+ and Mg before PO4.\n- Caution in renal impairment.")
     
-    # YOUR PREFERRED SLIDER/TOGGLE
+    # Toggle for Parenteral Nutrition
     is_parenteral = st.toggle("Patient is on Parenteral Nutrition?")
     if is_parenteral:
         st.warning("⚠️ **Glucose:** Monitor 6-hourly (QDS).")
