@@ -137,7 +137,7 @@ with replacement_col:
 with info_col:
     st.subheader("Clinical Notes")
     st.markdown("""
-    - **Glucose:** Monitor BD (PN 6-hourly).
+    - **Glucose:** Monitor BD (Parenteral Nutrition 6-hourly).
     - **Sequence:** Correct K+ and Mg before PO4.
     - **Renal:** Caution in renal impairment.
     """)
