@@ -5,39 +5,39 @@ st.set_page_config(
     page_title="Refeeding Syndrome Tool", 
     page_icon="🏥", 
     layout="wide",
-    initial_sidebar_state="collapsed" 
+    initial_sidebar_state="expanded" 
 )
 
-# Aggressive CSS to hide headers/menus and remove the sidebar toggle
+# CSS to hide the hamburger menu and header elements for a professional look
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
             header {visibility: hidden;}
             footer {visibility: hidden;}
             .stAppDeployButton {display:none;}
-            [data-testid="collapsedControl"] {display: none;}
-            .block-container {padding-top: 1rem;}
+            .block-container {padding-top: 2rem;}
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-# --- 2. TITLE AND UNIFIED REFERENCE ---
+# --- 2. TITLE AND SIDEBAR ---
 st.title("Adult Refeeding Syndrome Clinical Decision Support")
 st.caption("Based on Taunton and Somerset NHS Foundation Trust Guidelines")
 
-with st.expander("📊 View Normal Electrolyte Reference Ranges", expanded=False):
+with st.sidebar:
+    st.header("Normal Reference Ranges")
     st.markdown("""
-    **Standard Adult Reference Ranges:**
-    * **Potassium (K+):** 3.5 – 5.5 mmol/L
-    * **Phosphate (PO4):** 0.8 – 1.5 mmol/L
-    * **Magnesium (Mg):** 0.7 – 1.0 mmol/L
-    * **Corrected Calcium:** 2.2 – 2.6 mmol/L
-    * **Sodium (Na+):** 135 – 145 mmol/L
-    ---
-    *MDT Reminder: A Dietitian should be involved at the earliest opportunity.*
+    *Standard adult norms (may vary by lab):*
+    - **Potassium (K+):** 3.5 – 5.5 mmol/L
+    - **Phosphate (PO4):** 0.8 – 1.5 mmol/L
+    - **Magnesium (Mg):** 0.7 – 1.0 mmol/L
+    - **Corrected Calcium:** 2.2 – 2.6 mmol/L
+    - **Sodium (Na+):** 135 – 145 mmol/L
     """)
+    st.divider()
+    st.write("**MDT Reminder:** A Dietitian should be involved at the earliest opportunity.")
 
-# --- 3. RISK STRATIFICATION ---
+# --- 3. STEP 1: RISK STRATIFICATION ---
 st.header("Step 1: Risk Assessment")
 col_risk1, col_risk2 = st.columns(2)
 
@@ -61,6 +61,7 @@ with col_risk2:
     ex1 = st.checkbox("BMI < 14 kg/m²")
     ex2 = st.checkbox("Little/no nutrition > 15 days")
 
+# Risk Level Logic
 risk_level = "At Risk (Standard)"
 if ex1 or ex2:
     risk_level = "Extremely High Risk"
@@ -73,7 +74,7 @@ elif c3:
 
 st.info(f"Calculated Risk Category: **{risk_level}**")
 
-# --- 4. INITIAL MANAGEMENT ---
+# --- 4. STEP 2: INITIAL MANAGEMENT ---
 st.header("Step 2: Initial Management Plan")
 
 if risk_level == "Extremely High Risk":
@@ -93,7 +94,7 @@ with st.expander("Mandatory Vitamin Prophylaxis (Day 1-10)", expanded=True):
     * *If IV Only (Pabrinex):* 1 pair TDS
     """)
 
-# --- 5. ELECTROLYTE REPLACEMENT ---
+# --- 5. STEP 3: ELECTROLYTE REPLACEMENT ---
 st.header("Step 3: Electrolyte Replacement & Monitoring")
 st.write("**Frequency:** Daily until stable, then twice weekly.")
 
@@ -134,7 +135,7 @@ with info_col:
     - **Sequence:** Correct K+ and Mg before PO4.
     - **Renal:** Caution in renal impairment.
     """)
-    # Logic for Glucose Monitoring
+    # Interactive Glucose Logic
     is_parenteral = st.toggle("Patient is on Parenteral Nutrition?")
     if is_parenteral:
         st.warning("⚠️ **Glucose:** Monitor 6-hourly (QDS).")
