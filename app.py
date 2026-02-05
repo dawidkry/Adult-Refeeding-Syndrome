@@ -123,8 +123,8 @@ if analyte == "Potassium (K+)":
             st.write("**Treatment Advice:** 2 tablets Sando-K TDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours (Ref: 168).")
             st.info("**Monitoring:** Check serum K+ every 24 hours (Ref: 176).")
             
-    elif val_k >= 5.5:
-        st.error("#### 🚨 Clinical Action: Hyperkalaemia Management")
+    elif val_k > 5.5:
+        st.error("#### 🚨 Clinical Action: Review ECG for Hyperkalaemia")
         st.markdown("""
         **ECG Warning Signs:**
         * **Tented (Peaked) T-waves** (tall/narrow)
