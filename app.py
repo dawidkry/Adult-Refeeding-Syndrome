@@ -1,5 +1,5 @@
 import streamlit as st
-import datetime  # Fixes the NameError
+import datetime 
 
 st.set_page_config(page_title="Refeeding Syndrome Guide", layout="centered")
 
@@ -46,22 +46,18 @@ with st.expander("Patient Criteria", expanded=True):
     with col2:
         meds = st.checkbox("New insulin, chemo, antacids, or diuretics")
 
-# Risk Logic based on Section 3.0
+# Risk Logic
 risk_level = "Low Risk"
 rec_kcal = 25
 
 if bmi < 14 or days_starved > 15:
-    risk_level = "Extremely High Risk"
-    rec_kcal = 5
+    risk_level = "Extremely High Risk"; rec_kcal = 5
 elif (bmi < 16 or weight_loss > 15 or days_starved > 10 or low_elec):
-    risk_level = "High Risk"
-    rec_kcal = 10
+    risk_level = "High Risk"; rec_kcal = 10
 elif ( (bmi < 18.5) + (weight_loss > 10) + (days_starved > 5) + alcohol + meds ) >= 2:
-    risk_level = "High Risk"
-    rec_kcal = 10
+    risk_level = "High Risk"; rec_kcal = 10
 elif days_starved > 5:
-    risk_level = "At Risk"
-    rec_kcal = 15
+    risk_level = "At Risk"; rec_kcal = 15
 
 st.subheader(f"Calculated Risk: {risk_level}")
 
@@ -76,9 +72,8 @@ elif risk_level == "High Risk":
 elif risk_level == "At Risk":
     st.info("**Feeding:** Start at max 50% of nutritional requirements for the first 2 days.")
 
-# Feeding Rate Slider
 kcal_slider = st.slider("Target Initial Energy (kcal/kg/day):", min_value=5, max_value=35, value=rec_kcal)
-daily_target = round(weight * kcal_slider) # Defined for summary
+daily_target = round(weight * kcal_slider)
 st.success(f"**Initial Energy Target: {daily_target} kcal/day**")
 
 st.write("### Vitamin Supplementation (Start Day 1)")
@@ -93,56 +88,30 @@ st.markdown("""
 # --- STEP 3: LABORATORY MONITORING & CORRECTION ---
 st.header("Step 3: Laboratory Monitoring & Correction")
 
-st.write("**Frequency:** Daily until stable, then twice weekly.")
-
 st.write("### Corrective Actions (Based on Blood Results)")
-analyte = st.selectbox("Select abnormal electrolyte:", ["None", "Potassium (K+)", "Magnesium (Mg)", "Phosphate (PO4)"])
+# Added Calcium (Adj) to this list
+analyte = st.selectbox("Select abnormal electrolyte:", ["None", "Potassium (K+)", "Magnesium (Mg)", "Phosphate (PO4)", "Calcium (Adj)"])
 
 treatment_note = "No electrolyte replacement required at time of assessment."
 
 # POTASSIUM
 if analyte == "Potassium (K+)":
     val_k = st.number_input("Serum K+ (mmol/L)", min_value=0.0, step=0.1)
-    
     if 0.1 <= val_k < 3.5:
         st.warning("#### ⚠️ Clinical Action: Review ECG for Hypokalaemia")
-        st.markdown("""
-        **Look for morphological changes:**
-        * **P-wave flattening** (or increased amplitude)
-        * **T-wave flattening** or inversion
-        * **Prominent U-waves** (characteristic)
-        * **ST-segment depression**
-        """)
-        
-        
+        st.markdown("*P-wave flattening, T-wave flattening/inversion, prominent U-waves, ST-depression.*")
         
         if val_k < 2.5:
             treatment_note = "40mmol K+ in 1L 0.9% NaCl IV over min 4 hours. Check serum K+ every 12h."
             st.error(f"**Treatment Advice:** {treatment_note}")
-            st.info("**Monitoring:** Check serum K+ every 12 hours.")
-            st.warning("NB: Continuous ECG monitoring is essential for rates >20 mmol/hr.")
-        elif val_k < 3.0:
-            treatment_note = "2 tablets Sando-K QDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours."
-            st.write(f"**Treatment Advice:** {treatment_note}")
-            st.info("**Monitoring:** Check serum K+ every 24 hours.")
         else:
-            treatment_note = "2 tablets Sando-K TDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours."
+            treatment_note = "2 tablets Sando-K TDS/QDS or 40mmol K+ IV over 8 hours."
             st.write(f"**Treatment Advice:** {treatment_note}")
-            st.info("**Monitoring:** Check serum K+ every 24 hours.")
-            
     elif val_k > 5.5:
         st.error("#### 🚨 Clinical Action: Review ECG for Hyperkalaemia")
-        st.markdown("""
-        **ECG Warning Signs:**
-        * **Tented (Peaked) T-waves** (tall/narrow)
-        * **P-wave flattening** or disappearance
-        * **Widening of the QRS complex** (Imminent cardiac arrest)
-        """)
+        st.markdown("*Tented T-waves, P-wave flattening, widening QRS.*")
         
-        
-        
-        treatment_note = "Stop all K+ supplements. Urgent medical review. Contact nutrition team."
-        st.warning("**Clinical Warning:** Beware of renal impairment in malnourished/dehydrated patients.")
+        treatment_note = "Stop all K+ supplements. Urgent medical review. Check renal function."
         st.info(f"**Treatment Advice:** {treatment_note}")
 
 # MAGNESIUM
@@ -152,41 +121,45 @@ elif analyte == "Magnesium (Mg)":
         treatment_note = "Give 20mmol Magnesium Sulphate IV over 12 hours. Check serum every 12h."
         st.error(f"**Treatment Advice:** {treatment_note}")
     elif 0.5 <= val_mg < 0.7:
-        treatment_note = "5ml Magnesium Hydroxide TDS orally until serum >0.7 mmol/L, then 5ml BD x 48 hr."
+        treatment_note = "5ml Magnesium Hydroxide TDS orally until serum >0.7 mmol/L."
         st.warning(f"**Treatment Advice:** {treatment_note}")
-        st.info("**Monitoring:** Check serum Mg every 24 hours.")
 
 # PHOSPHATE
 elif analyte == "Phosphate (PO4)":
     val_p = st.number_input("Serum PO4 (mmol/L)", min_value=0.0, step=0.1)
     if 0.1 <= val_p < 0.3:
-        treatment_note = "Give IV Sodium Glycerophosphate 20mmol over 8-12 hours. Check serum every 12h."
+        treatment_note = "Give IV Sodium Glycerophosphate 20mmol over 8-12 hours. (Check for <45kg)."
         st.error(f"**Treatment Advice:** {treatment_note}")
-        if weight < 45: 
-            st.warning("NB: Reduce dose by 50% for patients <45kg.")
-    elif 0.3 <= val_p < 0.5:
-        treatment_note = "If oral route suitable: 2 tablets Phosphate-Sandoz OD. Otherwise: IV replacement."
-        st.warning(f"**Treatment Advice:** {treatment_note}")
-    elif 0.5 <= val_p < 0.7:
-        treatment_note = "1 tablet Phosphate-Sandoz OD. Check serum every 24h."
+    elif 0.3 <= val_p < 0.7:
+        treatment_note = "1-2 tablets Phosphate-Sandoz OD. Check serum every 24h."
         st.info(f"**Treatment Advice:** {treatment_note}")
 
-# CLINICAL MONITORING NOTES
+# CALCIUM (NEW SECTION)
+elif analyte == "Calcium (Adj)":
+    val_ca = st.number_input("Adjusted Calcium (mmol/L)", min_value=0.0, step=0.1)
+    if 0.1 <= val_ca < 2.2:
+        st.warning("#### ⚠️ Clinical Action: Review Magnesium first")
+        st.info("Hypocalcaemia is often refractory if hypomagnesaemia is not corrected first.")
+        
+        if val_ca < 1.9:
+            treatment_note = "If symptomatic or <1.9 mmol/L: 10ml Calcium Gluconate 10% IV over 10 mins."
+            st.error(f"**Treatment Advice:** {treatment_note}")
+        else:
+            treatment_note = "Oral Calcium supplementation (e.g. Calcichew) and review Vit D status."
+            st.write(f"**Treatment Advice:** {treatment_note}")
+
+# --- MONITORING & SUMMARY ---
 st.divider()
 st.subheader("Clinical Monitoring Notes")
 st.markdown("""
-* **Parenteral Nutrition (PN):** Monitor blood glucose every 6 hours.
 * **Glucose:** Monitor at least twice daily until full feed established.
 * **Fluid Status:** Restore circulatory volume closely; avoid fluid overload.
 * **Renal Impairment:** Beware of normal K+/PO4 levels in dehydrated patients with renal failure.
 """)
 
-st.caption("Note: Always involve a Dietitian at the earliest opportunity.")
-
-# --- STEP 4: REPORT GENERATION ---
 st.divider()
 st.header("Step 4: Clinical Summary")
-patient_id = st.text_input("Patient Identifier (e.g., Initials/Hospital Number)")
+patient_id = st.text_input("Patient Identifier (e.g., Hospital Number)")
 
 if st.button("Generate Summary"):
     summary = f"""
@@ -204,8 +177,6 @@ if st.button("Generate Summary"):
     - Monitoring: Daily U&Es, Mg, PO4, Glucose.
     """
     st.text_area("Copy/Paste to Notes:", summary, height=250)
-    
-    # Simple TXT download for local records
     st.download_button("Download Summary (.txt)", summary, file_name=f"Refeeding_{patient_id}.txt")
 
-st.caption("Note: This tool is a clinical decision aid and does not replace professional judgment.")
+st.caption("Note: Always involve a Dietitian at the earliest opportunity.")
