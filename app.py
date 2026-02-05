@@ -61,7 +61,7 @@ st.write("**Frequency:** Daily until stable, then twice weekly.")
 st.write("### Corrective Actions (Based on Blood Results)")
 analyte = st.selectbox("Select abnormal electrolyte:", ["Potassium (K+)", "Magnesium (Mg)", "Phosphate (PO4)"])
 
-# POTASSIUM (Restored Treatment + Specific ECG Instructions)
+# POTASSIUM (With Targeted ECG morphology instructions and Treatment)
 if analyte == "Potassium (K+)":
     val_k = st.number_input("Serum K+ (mmol/L)", min_value=0.0, step=0.1)
     
@@ -74,8 +74,6 @@ if analyte == "Potassium (K+)":
         * **Prominent U-waves** (the characteristic sign).
         * **ST-segment depression**.
         """)
-        
-        
         
         if val_k < 2.5:
             st.error("**Treatment Advice:** 40mmol K+ in 1L 0.9% NaCl IV over min 4 hours. Check every 12h.")
@@ -91,11 +89,6 @@ if analyte == "Potassium (K+)":
         * **P-wave flattening** or disappearance.
         * **Widening of the QRS complex** (Warning: Imminent cardiac arrest).
         """)
-        
-        
-
-[Image of ECG changes in hyperkalemia]
-
 
 # MAGNESIUM (Fixed Input & Treatment Restored)
 elif analyte == "Magnesium (Mg)":
