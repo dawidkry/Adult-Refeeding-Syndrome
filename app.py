@@ -134,7 +134,7 @@ if analyte == "Potassium (K+)":
         
         
         
-        st.warning("**Clinical Warning:** Beware of renal impairment in malnourished/dehydrated patients (Ref: 87).")
+        st.warning("**Clinical Warning:** Beware of renal impairment in malnourished/dehydrated patients.")
         st.info("**Treatment Advice:** Stop all potassium-containing fluids/supplements. Urgent medical review required. Contact nutrition team.")
 
 # MAGNESIUM
