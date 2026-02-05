@@ -113,15 +113,15 @@ if analyte == "Potassium (K+)":
         
         
         if val_k < 2.5:
-            st.error("**Treatment Advice:** 40mmol K+ in 1L 0.9% NaCl IV over min 4 hours (Ref: 183).")
+            st.error("**Treatment Advice:** 40mmol K+ in 1L 0.9% NaCl IV over min 4 hours.")
             st.info("**Monitoring:** Check serum K+ every 12 hours (Ref: 184).")
-            st.warning("NB: Continuous ECG monitoring is essential for rates >20 mmol/hr (Ref: 185).")
+            st.warning("NB: Continuous ECG monitoring is essential for rates >20 mmol/hr.")
         elif val_k < 3.0:
-            st.write("**Treatment Advice:** 2 tablets Sando-K QDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours (Ref: 172).")
-            st.info("**Monitoring:** Check serum K+ every 24 hours (Ref: 178).")
+            st.write("**Treatment Advice:** 2 tablets Sando-K QDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours.")
+            st.info("**Monitoring:** Check serum K+ every 24 hours.")
         else:
-            st.write("**Treatment Advice:** 2 tablets Sando-K TDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours (Ref: 168).")
-            st.info("**Monitoring:** Check serum K+ every 24 hours (Ref: 176).")
+            st.write("**Treatment Advice:** 2 tablets Sando-K TDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours.")
+            st.info("**Monitoring:** Check serum K+ every 24 hours.")
             
     elif val_k > 5.5:
         st.error("#### 🚨 Clinical Action: Review ECG for Hyperkalaemia")
