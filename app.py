@@ -114,7 +114,7 @@ if analyte == "Potassium (K+)":
         
         if val_k < 2.5:
             st.error("**Treatment Advice:** 40mmol K+ in 1L 0.9% NaCl IV over min 4 hours.")
-            st.info("**Monitoring:** Check serum K+ every 12 hours (Ref: 184).")
+            st.info("**Monitoring:** Check serum K+ every 12 hours.")
             st.warning("NB: Continuous ECG monitoring is essential for rates >20 mmol/hr.")
         elif val_k < 3.0:
             st.write("**Treatment Advice:** 2 tablets Sando-K QDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours.")
