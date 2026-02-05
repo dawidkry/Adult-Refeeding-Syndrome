@@ -73,17 +73,11 @@ if analyte == "Phosphate (PO4)":
         st.info("1 tablet Phosphate-Sandoz OD. Check serum every 24h[cite: 37].")
 
 elif analyte == "Magnesium (Mg)":
-    val = st.number_input(
-        "Serum Mg (mmol/L)",
-        step=0.1,
-        key="magnesium_value"
-    )
+    val = st.number_input("Serum Mg (mmol/L)", step=0.1)
     if val < 0.5:
         st.error("Give 20mmol Magnesium Sulphate IV over 12 hours. Check serum every 12h[cite: 41].")
     elif val < 0.7:
         st.warning("5ml Magnesium Hydroxide TDS orally until >0.7. Check every 24h[cite: 40].")
-    else:
-        st.success("Magnesium within acceptable range. Continue daily monitoring during refeeding.")
 
 elif analyte == "Potassium (K+)":
     val = st.number_input("Serum K+ (mmol/L)", step=0.1)
