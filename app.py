@@ -1,4 +1,5 @@
 import streamlit as st
+import datetime  # Fixes the NameError
 
 st.set_page_config(page_title="Refeeding Syndrome Guide", layout="centered")
 
@@ -77,7 +78,8 @@ elif risk_level == "At Risk":
 
 # Feeding Rate Slider
 kcal_slider = st.slider("Target Initial Energy (kcal/kg/day):", min_value=5, max_value=35, value=rec_kcal)
-st.success(f"**Initial Energy Target: {round(weight * kcal_slider)} kcal/day**")
+daily_target = round(weight * kcal_slider) # Defined for summary
+st.success(f"**Initial Energy Target: {daily_target} kcal/day**")
 
 st.write("### Vitamin Supplementation (Start Day 1)")
 st.info("Give first dose at least 30 mins before feeding starts.")
@@ -94,7 +96,9 @@ st.header("Step 3: Laboratory Monitoring & Correction")
 st.write("**Frequency:** Daily until stable, then twice weekly.")
 
 st.write("### Corrective Actions (Based on Blood Results)")
-analyte = st.selectbox("Select abnormal electrolyte:", ["Potassium (K+)", "Magnesium (Mg)", "Phosphate (PO4)"])
+analyte = st.selectbox("Select abnormal electrolyte:", ["None", "Potassium (K+)", "Magnesium (Mg)", "Phosphate (PO4)"])
+
+treatment_note = "No electrolyte replacement required at time of assessment."
 
 # POTASSIUM
 if analyte == "Potassium (K+)":
@@ -113,14 +117,17 @@ if analyte == "Potassium (K+)":
         
         
         if val_k < 2.5:
-            st.error("**Treatment Advice:** 40mmol K+ in 1L 0.9% NaCl IV over min 4 hours.")
+            treatment_note = "40mmol K+ in 1L 0.9% NaCl IV over min 4 hours. Check serum K+ every 12h."
+            st.error(f"**Treatment Advice:** {treatment_note}")
             st.info("**Monitoring:** Check serum K+ every 12 hours.")
             st.warning("NB: Continuous ECG monitoring is essential for rates >20 mmol/hr.")
         elif val_k < 3.0:
-            st.write("**Treatment Advice:** 2 tablets Sando-K QDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours.")
+            treatment_note = "2 tablets Sando-K QDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours."
+            st.write(f"**Treatment Advice:** {treatment_note}")
             st.info("**Monitoring:** Check serum K+ every 24 hours.")
         else:
-            st.write("**Treatment Advice:** 2 tablets Sando-K TDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours.")
+            treatment_note = "2 tablets Sando-K TDS orally (72 mmol K+) OR 40mmol K+ IV over min 8 hours."
+            st.write(f"**Treatment Advice:** {treatment_note}")
             st.info("**Monitoring:** Check serum K+ every 24 hours.")
             
     elif val_k > 5.5:
@@ -134,29 +141,35 @@ if analyte == "Potassium (K+)":
         
         
         
+        treatment_note = "Stop all K+ supplements. Urgent medical review. Contact nutrition team."
         st.warning("**Clinical Warning:** Beware of renal impairment in malnourished/dehydrated patients.")
-        st.info("**Treatment Advice:** Stop all potassium-containing fluids/supplements. Urgent medical review required. Contact nutrition team.")
+        st.info(f"**Treatment Advice:** {treatment_note}")
 
 # MAGNESIUM
 elif analyte == "Magnesium (Mg)":
     val_mg = st.number_input("Serum Mg (mmol/L)", min_value=0.0, step=0.1)
     if 0.1 <= val_mg < 0.5:
-        st.error("**Treatment Advice:** Give 20mmol Magnesium Sulphate IV over 12 hours. Check serum every 12h.")
+        treatment_note = "Give 20mmol Magnesium Sulphate IV over 12 hours. Check serum every 12h."
+        st.error(f"**Treatment Advice:** {treatment_note}")
     elif 0.5 <= val_mg < 0.7:
-        st.warning("**Treatment Advice:** 5ml Magnesium Hydroxide TDS orally until serum >0.7 mmol/L, then 5ml BD x 48 hr.")
+        treatment_note = "5ml Magnesium Hydroxide TDS orally until serum >0.7 mmol/L, then 5ml BD x 48 hr."
+        st.warning(f"**Treatment Advice:** {treatment_note}")
         st.info("**Monitoring:** Check serum Mg every 24 hours.")
 
 # PHOSPHATE
 elif analyte == "Phosphate (PO4)":
     val_p = st.number_input("Serum PO4 (mmol/L)", min_value=0.0, step=0.1)
     if 0.1 <= val_p < 0.3:
-        st.error("**Treatment Advice:** Give IV Sodium Glycerophosphate 20mmol over 8-12 hours. Check serum every 12h.")
+        treatment_note = "Give IV Sodium Glycerophosphate 20mmol over 8-12 hours. Check serum every 12h."
+        st.error(f"**Treatment Advice:** {treatment_note}")
         if weight < 45: 
             st.warning("NB: Reduce dose by 50% for patients <45kg.")
     elif 0.3 <= val_p < 0.5:
-        st.warning("**Treatment Advice:** If oral route suitable: 2 tablets Phosphate-Sandoz OD. Otherwise: IV replacement.")
+        treatment_note = "If oral route suitable: 2 tablets Phosphate-Sandoz OD. Otherwise: IV replacement."
+        st.warning(f"**Treatment Advice:** {treatment_note}")
     elif 0.5 <= val_p < 0.7:
-        st.info("**Treatment Advice:** 1 tablet Phosphate-Sandoz OD. Check serum every 24h.")
+        treatment_note = "1 tablet Phosphate-Sandoz OD. Check serum every 24h."
+        st.info(f"**Treatment Advice:** {treatment_note}")
 
 # CLINICAL MONITORING NOTES
 st.divider()
@@ -187,7 +200,7 @@ if st.button("Generate Summary"):
     
     Management Plan:
     - Vitamins: Thiamine 50mg QDS, Vit B Co Strong 2 tabs TDS, Forceval OD.
-    - Electrolyte Correction: {treatment_note if treatment_note else 'None required at assessment'}
+    - Electrolyte Correction: {treatment_note}
     - Monitoring: Daily U&Es, Mg, PO4, Glucose.
     """
     st.text_area("Copy/Paste to Notes:", summary, height=250)
