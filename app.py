@@ -8,10 +8,10 @@ with st.sidebar:
     st.info("""
     **Standard Adult Ranges (Verify Locally):**
     
-    * [cite_start]**Potassium ($K^+$):** 3.5 – 5.5 mmol/L [cite: 165]
-    * [cite_start]**Magnesium ($Mg$):** 0.7 – 1.0 mmol/L [cite: 151]
-    * [cite_start]**Phosphate ($PO_4$):** 0.8 – 1.5 mmol/L [cite: 123]
-    * [cite_start]**Calcium (Adj):** 2.2 – 2.6 mmol/L [cite: 90]
+    * **Potassium ($K^+$):** 3.5 – 5.5 mmol/L
+    * **Magnesium ($Mg$):** 0.7 – 1.0 mmol/L
+    * **Phosphate ($PO_4$):** 0.8 – 1.5 mmol/L
+    * **Calcium (Adj):** 2.2 – 2.6 mmol/L
     """)
     
     st.warning("""
@@ -20,11 +20,11 @@ with st.sidebar:
     2.  Calcium
     3.  Phosphate
     
-    [cite_start]*Rationale: IV phosphate can lower Ca/Mg/K further.* [cite: 97, 98]
+    *Rationale: IV phosphate can lower Ca/Mg/K further.*
     """)
     
     st.markdown("---")
-    st.caption("Guideline: Taunton & Somerset NHS Foundation Trust")
+    [cite_start]st.caption("Guideline: Taunton & Somerset NHS Foundation Trust [cite: 2, 3]")
 
 # --- MAIN APP CONTENT ---
 st.title("Adult Refeeding Syndrome Clinical Tool")
@@ -40,26 +40,30 @@ with st.expander("Patient Criteria", expanded=True):
     
     col1, col2 = st.columns(2)
     with col1:
-        low_elec = st.checkbox("Low baseline Potassium, Phosphate, or Magnesium")
-        alcohol = st.checkbox("History of alcohol excess")
+        low_elec = st.checkbox("Low baseline Potassium, Phosphate, or Magnesium (Ref: Section 3.2)")
+        alcohol = st.checkbox("History of alcohol excess (Ref: Section 3.2)")
     with col2:
-        meds = st.checkbox("New insulin, chemo, antacids, or diuretics")
+        meds = st.checkbox("New insulin, chemo, antacids, or diuretics (Ref: Section 3.2)")
 
-# Risk Logic based on Section 3.0
+# [cite_start]Risk Logic [cite: 44, 46, 58]
 risk_level = "Low Risk"
 rec_kcal = 25
 
+# [cite_start]Extremely High Risk [cite: 58, 59, 60]
 if bmi < 14 or days_starved > 15:
-    [cite_start]risk_level = "Extremely High Risk" [cite: 58, 59, 60]
+    risk_level = "Extremely High Risk"
     rec_kcal = 5
+# [cite_start]High Risk Criteria 1 [cite: 46, 48, 49, 50, 51]
 elif (bmi < 16 or weight_loss > 15 or days_starved > 10 or low_elec):
-    [cite_start]risk_level = "High Risk" [cite: 46, 48, 49, 50, 51]
+    risk_level = "High Risk"
     rec_kcal = 10
+# [cite_start]High Risk Criteria 2 (2 or more) [cite: 52, 53, 54, 55, 56, 57]
 elif ( (bmi < 18.5) + (weight_loss > 10) + (days_starved > 5) + alcohol + meds ) >= 2:
-    [cite_start]risk_level = "High Risk" [cite: 52, 53, 54, 55, 56, 57]
+    risk_level = "High Risk"
     rec_kcal = 10
+# [cite_start]At Risk [cite: 44, 45]
 elif days_starved > 5:
-    [cite_start]risk_level = "At Risk" [cite: 44, 45]
+    risk_level = "At Risk"
     rec_kcal = 15
 
 st.subheader(f"Calculated Risk: {risk_level}")
@@ -78,7 +82,7 @@ elif risk_level == "At Risk":
 kcal_slider = st.slider("Target Initial Energy (kcal/kg/day):", min_value=5, max_value=35, value=rec_kcal)
 st.success(f"**Initial Energy Target: {round(weight * kcal_slider)} kcal/day**")
 
-st.write("### Vitamin Supplementation (Start Day 1)")
+[cite_start]st.write("### Vitamin Supplementation (Start Day 1) [cite: 100]")
 [cite_start]st.info("Give first dose at least 30 mins before feeding starts[cite: 110].")
 st.markdown("""
 * [cite_start]**Thiamine:** 50mg QDS for 10 days[cite: 106].
@@ -95,7 +99,7 @@ st.header("Step 3: Laboratory Monitoring & Correction")
 st.write("### Corrective Actions (Based on Blood Results)")
 analyte = st.selectbox("Select abnormal electrolyte:", ["Potassium (K+)", "Magnesium (Mg)", "Phosphate (PO4)"])
 
-# POTASSIUM (Ref: Chart 3)
+# [cite_start]POTASSIUM (Ref: Chart 3) [cite: 164]
 if analyte == "Potassium (K+)":
     val_k = st.number_input("Serum K+ (mmol/L)", min_value=0.0, step=0.1)
     
@@ -131,9 +135,9 @@ if analyte == "Potassium (K+)":
         """)
         st.write("")
         [cite_start]st.warning("**Clinical Warning:** Beware of renal impairment in malnourished/dehydrated patients[cite: 87].")
-        [cite_start]st.info("**Treatment Advice:** Stop all potassium-containing fluids/supplements. Urgent medical review required. Contact nutrition team[cite: 7].")
+        st.info("**Treatment Advice:** Stop all potassium-containing fluids/supplements. Urgent medical review required. Contact nutrition team.")
 
-# MAGNESIUM (Ref: Chart 2)
+# [cite_start]MAGNESIUM (Ref: Chart 2) [cite: 149]
 elif analyte == "Magnesium (Mg)":
     val_mg = st.number_input("Serum Mg (mmol/L)", min_value=0.0, step=0.1)
     if 0.1 <= val_mg < 0.5:
@@ -143,7 +147,7 @@ elif analyte == "Magnesium (Mg)":
         [cite_start]st.warning("**Treatment Advice:** 5ml Magnesium Hydroxide TDS orally until serum >0.7 mmol/L, then 5ml BD x 48 hr[cite: 153].")
         [cite_start]st.info("**Monitoring:** Check serum Mg every 24 hours[cite: 154].")
 
-# PHOSPHATE (Ref: Chart 1)
+# [cite_start]PHOSPHATE (Ref: Chart 1) [cite: 122]
 elif analyte == "Phosphate (PO4)":
     val_p = st.number_input("Serum PO4 (mmol/L)", min_value=0.0, step=0.1)
     if 0.1 <= val_p < 0.3:
@@ -151,11 +155,11 @@ elif analyte == "Phosphate (PO4)":
         [cite_start]if weight < 45: st.warning("NB: Reduce dose by 50% for patients <45kg[cite: 139].")
         [cite_start]st.info("**Monitoring:** Check serum PO4/Ca/K/Mg every 12 hours[cite: 143].")
     elif 0.3 <= val_p < 0.5:
-        [cite_start]st.warning("**Treatment Advice:** If oral route suitable: 2 tablets Phosphate-Sandoz OD (32 mmol). Otherwise: IV replacement as above[cite: 131, 137].")
+        [cite_start]st.warning("**Treatment Advice:** If oral route suitable: 2 tablets Phosphate-Sandoz OD (32 mmol)[cite: 131, 133]. Otherwise: IV replacement as above.")
         [cite_start]st.info("**Monitoring:** Check serum PO4 every 24 hours (if oral)[cite: 134].")
     elif 0.5 <= val_p < 0.7:
-        [cite_start]st.info("**Treatment Advice:** 1 tablet Phosphate-Sandoz OD (16 mmol). If oral route unsuitable, contact Nutrition Team[cite: 125, 126].")
-        [cite_start]st.info("**Monitoring:** Check serum PO4 every 24 hours[cite: 134].")
+        [cite_start]st.info("**Treatment Advice:** 1 tablet Phosphate-Sandoz OD (16 mmol)[cite: 125]. [cite_start]If oral route unsuitable, contact Nutrition Team[cite: 126].")
+        st.info("**Monitoring:** Check serum PO4 every 24 hours.")
 
 # CLINICAL MONITORING NOTES
 st.divider()
@@ -167,4 +171,4 @@ st.markdown("""
 * [cite_start]**Renal Impairment:** Beware of normal K+/PO4 levels in dehydrated patients with renal failure[cite: 87].
 """)
 
-[cite_start]st.caption("Note: Always involve a Dietitian at the earliest opportunity[cite: 21].")
+[cite_start]st.caption("Note: Always involve a Dietitian at the earliest opportunity[cite: 21, 32].")
