@@ -1,132 +1,143 @@
 import streamlit as st
 
-# --- 1. PAGE CONFIG ---
-st.set_page_config(
-    page_title="Refeeding Syndrome Tool", 
-    page_icon="🏥", 
-    layout="wide",
-    initial_sidebar_state="collapsed" # We'll hide the actual sidebar and build our own
-)
+# --- CONFIGURATION & HEADER ---
+st.set_page_config(page_title="Adult Refeeding Guideline", layout="centered")
 
-# --- 2. CSS LOCKDOWN ---
-hide_st_style = """
-            <style>
-            /* Hide the actual sidebar, header, and all developer menus */
-            [data-testid="stSidebar"], 
-            [data-testid="stHeader"], 
-            [data-testid="stToolbar"], 
-            #MainMenu, 
-            footer {
-                display: none !important;
-            }
-            
-            .stAppDeployButton {display:none !important;}
-            .block-container {padding-top: 1.5rem;}
-            </style>
-            """
-st.markdown(hide_st_style, unsafe_allow_html=True)
+st.title("Adult Refeeding Syndrome Clinical Tool")
+st.caption("Based on Taunton and Somerset NHS Foundation Trust Guidelines [cite: 2, 4]")
 
-# --- 3. MAIN LAYOUT (Creating a Permanent Sidebar Column) ---
-# We split the page into a small left column (1) and a large main column (4)
-side_col, main_col = st.columns([1, 4])
+# --- STEP 1: RISK ASSESSMENT ---
+st.header("Step 1: Risk Assessment")
+st.info("Identify patients at risk of refeeding syndrome prior to initiating nutrition[cite: 37].")
 
-# --- FIXED LEFT COLUMN (Acts as your Sidebar) ---
-with side_col:
-    st.markdown("### 📊 Reference Ranges")
-    st.info("""
-    **Standard Adult Norms:**
-    - **K+:** 3.5 – 5.5 mmol/L
-    - **PO4:** 0.8 – 1.5 mmol/L
-    - **Mg:** 0.7 – 1.0 mmol/L
-    - **Ca:** 2.2 – 2.6 mmol/L
-    - **Na+:** 135 – 145 mmol/L
-    """)
-    st.divider()
-    st.caption("**MDT:** Consult Dietitian early.")
-    st.caption("**Taunton & Somerset NHS Trust**")
+with st.expander("Patient Assessment Criteria", expanded=True):
+    col_a, col_b = st.columns(2)
+    with col_a:
+        bmi = st.number_input("Current BMI (kg/m²) [cite: 48, 53, 59, 61]", min_value=5.0, max_value=50.0, value=20.0, step=0.1)
+        weight_loss = st.number_input("Unintentional weight loss in last 3-6 months (%) [cite: 49, 54, 62]", min_value=0.0, max_value=100.0, value=0.0)
+    with col_b:
+        days_starved = st.number_input("Days with little or no nutrition [cite: 45, 50, 60]", min_value=0, max_value=100, value=0)
+        low_elec_baseline = st.checkbox("Low baseline K+, PO4, or Mg (prior to feeding) [cite: 51]")
 
-# --- MAIN CONTENT ---
-with main_col:
-    st.title("Adult Refeeding Syndrome Clinical Decision Support")
-    st.caption("Clinical Guidance Tool")
+    st.write("**Additional Factors (High Risk if 2 or more met with BMI <18.5)[cite: 52]:**")
+    col_c, col_d = st.columns(2)
+    with col_c:
+        alcohol = st.checkbox("History of alcohol excess [cite: 56]")
+    with col_d:
+        meds = st.checkbox("New insulin, chemotherapy, antacids, or diuretics [cite: 57]")
 
-    # --- STEP 1: RISK ASSESSMENT ---
-    st.header("Step 1: Risk Assessment")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("High Risk")
-        r1 = st.checkbox("BMI < 16 kg/m²")
-        r2 = st.checkbox("Unintentional weight loss > 15% (3-6 months)")
-        r3 = st.checkbox("Little/no nutrition > 10 days")
-        r4 = st.checkbox("Low baseline K+, PO4, or Mg")
-        st.write("---")
-        st.subheader("2+ Criteria Needed (High Risk)")
-        c1 = st.checkbox("BMI < 18.5 kg/m²")
-        c2 = st.checkbox("Weight loss > 10% (3-6 months)")
-        c3 = st.checkbox("Little/no nutrition > 5 days")
-        c4 = st.checkbox("History of alcohol excess")
-        c5 = st.checkbox("New therapy (insulin, chemo, antacids, diuretics)")
+# Risk Logic Implementation
+risk_level = "Standard Risk"
+if bmi < 14 or days_starved > 15:
+    risk_level = "Extremely High Risk"
+elif (bmi < 16 or weight_loss > 15 or days_starved > 10 or low_elec_baseline):
+    risk_level = "High Risk"
+elif ( (bmi < 18.5) + (weight_loss > 10) + (days_starved > 5) + alcohol + meds ) >= 2:
+    risk_level = "High Risk"
+elif days_starved > 5:
+    risk_level = "At Risk"
 
-    with col2:
-        st.subheader("Extremely High Risk")
-        ex1 = st.checkbox("BMI < 14 kg/m²")
-        ex2 = st.checkbox("Little/no nutrition > 15 days")
+if risk_level == "Extremely High Risk":
+    st.error(f"Assessment: {risk_level}")
+elif risk_level == "High Risk":
+    st.warning(f"Assessment: {risk_level}")
+else:
+    st.success(f"Assessment: {risk_level}")
 
-    risk_level = "At Risk (Standard)"
-    if ex1 or ex2:
-        risk_level = "Extremely High Risk"
-    elif r1 or r2 or r3 or r4 or (sum([c1, c2, c3, c4, c5]) >= 2):
-        risk_level = "High Risk"
-    elif c3:
-        risk_level = "At Risk"
+# --- STEP 2: INITIAL MANAGEMENT ---
+st.header("Step 2: Initial Management")
 
-    st.warning(f"Calculated Risk Category: **{risk_level}**")
+# Feeding & Monitoring Guidance
+if risk_level == "Extremely High Risk":
+    st.markdown("### 🍴 Feeding Plan")
+    st.write("* Start at **5 kcal/kg/day**[cite: 79].")
+    st.write("* Increase gradually to meet full requirements by day 7[cite: 79].")
+    st.write("* **Cardiac Monitoring:** Consider continuous cardiac rhythm monitoring[cite: 84].")
+elif risk_level == "High Risk":
+    st.markdown("### 🍴 Feeding Plan")
+    st.write("* Start at **10 kcal/kg/day**[cite: 72].")
+    st.write("* Increase gradually to meet full requirements by days 4-7[cite: 72].")
+elif risk_level == "At Risk":
+    st.markdown("### 🍴 Feeding Plan")
+    st.write("* Start at maximum **50% of nutritional requirements** for the first 2 days[cite: 65].")
 
-    # --- STEP 2: MANAGEMENT ---
-    st.header("Step 2: Initial Management Plan")
-    if risk_level == "Extremely High Risk":
-        st.error("**Feed:** Start 5 kcal/kg/day. Increase to full by Day 7.")
-    elif risk_level == "High Risk":
-        st.warning("**Feed:** Start 10 kcal/kg/day. Increase to full by Day 4-7.")
-    else:
-        st.success("**Feed:** Max 50% requirements for first 2 days.")
+# Prophylaxis
+st.markdown("### 💊 Vitamin Prophylaxis (Start Day 1)")
+st.warning("First dose must be given at least 30 minutes BEFORE feeding[cite: 110].")
+st.markdown("""
+* **Thiamine:** 50 mg four times a day (QDS) for 10 days[cite: 106].
+* **Vitamin B Co Strong:** 2 tablets three times a day (TDS) for 10 days[cite: 105].
+* **Forceval:** 1 capsule (or soluble tablet) daily for 10 days[cite: 102, 103].
+* **If I.V. required:** Pabrinex vials 1 and 2 three times a day (TDS) for 10 days[cite: 109].
+""")
 
-    with st.expander("💊 Mandatory Vitamin Prophylaxis (Day 1-10)", expanded=True):
-        st.markdown("**Give first dose at least 30 mins before feeding**")
-        st.markdown("- **Thiamine:** 50mg QDS\n- **Vit B Co Strong:** 2 tabs TDS\n- **Forceval:** 1 cap OD\n- **Pabrinex:** 1 pair TDS (if IV)")
+# --- STEP 3: LABORATORY MONITORING & CORRECTION ---
+st.header("Step 3: Laboratory Monitoring & Correction")
+st.write("Monitor biochemistry daily until stable, then twice weekly[cite: 90].")
 
-    # --- STEP 3: ELECTROLYTES ---
-    st.header("Step 3: Electrolyte Replacement")
-    rep_col, note_col = st.columns([2, 1])
+# Hierarchy Alert
+st.warning("⚠️ **Correction Priority:** Correct K+ and Mg first, then Calcium, and finally Phosphate[cite: 97].")
 
-    with rep_col:
-        analyte = st.selectbox("Select Abnormal Electrolyte:", ["None", "Potassium (K+)", "Phosphate (PO4)", "Magnesium (Mg)"])
-        if analyte == "Potassium (K+)":
-            k_val = st.number_input("Serum K+ (mmol/L):", step=0.1)
-            if k_val < 2.5: st.error("40mmol K+ IV over min 4h. **Continuous ECG required.**")
-            elif k_val < 3.5: st.write("2 tabs Sando-K TDS/QDS OR 40mmol K+ IV over 8h.")
+analyte = st.selectbox("Select electrolyte to review:", ["Potassium (K+)", "Magnesium (Mg)", "Phosphate (PO4)"])
+
+# POTASSIUM LOGIC
+if analyte == "Potassium (K+)":
+    k_val = st.number_input("Current Serum K+ (mmol/L):", min_value=0.0, step=0.1)
+    
+    if k_val > 0 and k_val < 3.5:
+        st.subheader("⚠️ ECG Guidance: Hypokalaemia")
+        st.markdown("""
+        **Classic ECG Changes to monitor:**
+        * Flattened or inverted T-waves.
+        * **Prominent U-waves** (following the T-wave).
+        * ST-segment depression.
+        * Prolonged PR interval.
+        """)
         
-        elif analyte == "Phosphate (PO4)":
-            p_val = st.number_input("Serum PO4 (mmol/L):", step=0.1)
-            u45 = st.checkbox("Weight < 45kg?")
-            if p_val < 0.5:
-                dose = "10mmol" if u45 else "20mmol"
-                st.write(f"2 tabs Phosphate-Sandoz OD OR IV Sodium Glycerophosphate ({dose}).")
-
-    with note_col:
-        st.subheader("Clinical Notes")
-        st.markdown("- Correct K+ and Mg before PO4.")
-        
-        # CLEAR PARENTERAL NUTRITION TOGGLE
-        is_parenteral = st.toggle("Patient is on Parenteral Nutrition?")
-        if is_parenteral:
-            st.warning("⚠️ **Glucose:** Monitor 6-hourly (QDS).")
+        if k_val < 2.5:
+            st.error("**Treatment (Severe):** 40 mmol K+ in 1L 0.9% NaCl I.V. over min 4 hours[cite: 183].")
+            st.error("🚨 Continuous ECG monitoring is ESSENTIAL (infusion > 20 mmol/hr)[cite: 185].")
+            st.write("**Repeat Bloods:** Every 12 hours[cite: 184].")
+        elif k_val < 3.0:
+            st.warning("**Treatment (Moderate):** 2 tablets Sando-K QDS (72 mmol/day) OR 40 mmol K+ I.V. over min 8 hours[cite: 172, 175].")
+            st.write("**Repeat Bloods:** Every 24 hours[cite: 177].")
         else:
-            st.info("ℹ️ **Glucose:** Monitor Twice Daily (BD).")
+            st.info("**Treatment (Mild):** 2 tablets Sando-K TDS (72 mmol/day) OR 40 mmol K+ I.V. over min 8 hours[cite: 168, 171].")
+            st.write("**Repeat Bloods:** Every 24 hours[cite: 176].")
+            
+    elif k_val > 5.5:
+        st.subheader("🚨 ECG Guidance: Hyperkalaemia")
+        st.markdown("""
+        **Clinical Urgency - monitor for:**
+        * **Tall, tented (peaked) T-waves.**
+        * P-wave flattening or loss.
+        * **Widening of the QRS complex** (Warning: Imminent cardiac arrest).
+        """)
 
-    # --- FOOTER ---
-    st.divider()
-    f1, f2, f3 = st.columns(3)
-    with f1: st.caption("**Active:** 22 May 2017")
-    with f2: st.caption("**Review:** 22 May 2020")
-    with f3: st.caption("**Lead:** Dr D Pearl & Dr E Wesley")
+# MAGNESIUM LOGIC
+elif analyte == "Magnesium (Mg)":
+    mg_val = st.number_input("Current Serum Mg (mmol/L):", min_value=0.0, step=0.05)
+    
+    if mg_val > 0 and mg_val < 0.5:
+        st.error("**Treatment (Severe):** 20 mmol Magnesium Sulphate I.V. over 12 hours[cite: 155].")
+        st.write("**Repeat Bloods:** Every 12 hours[cite: 156].")
+    elif 0.5 <= mg_val < 0.7:
+        st.warning("**Treatment (Mild/Moderate):** 5 ml Magnesium Hydroxide TDS orally (21 mmol Mg) until level > 0.7, then BD for 48 hrs[cite: 153].")
+        st.write("**Repeat Bloods:** Every 24 hours[cite: 154].")
+
+# PHOSPHATE LOGIC
+elif analyte == "Phosphate (PO4)":
+    po4_val = st.number_input("Current Serum PO4 (mmol/L):", min_value=0.0, step=0.05)
+    
+    if po4_val > 0 and po4_val < 0.3:
+        st.error("**Treatment (Severe):** I.V. Sodium Glycerophosphate 20 mmol in 1L 0.9% NaCl over 8-12 hours[cite: 142].")
+        st.write("**Repeat Bloods:** Every 12 hours[cite: 143].")
+    elif 0.3 <= po4_val < 0.5:
+        st.warning("**Treatment (Moderate):** If oral route suitable: 2 tablets Phosphate-Sandoz OD (32 mmol). If I.V. needed: 20 mmol over 8-12 hours[cite: 131, 137, 138].")
+        st.write("**Repeat Bloods:** Every 12-24 hours[cite: 134, 143].")
+    elif 0.5 <= po4_val < 0.7:
+        st.info("**Treatment (Mild):** 1 tablet Phosphate-Sandoz OD (16 mmol)[cite: 125].")
+        st.write("**Repeat Bloods:** Every 24 hours[cite: 134].")
+
+st.divider()
+st.caption("Disclaimer: This tool is for clinical guidance for medical staff. Always consult a Dietitian and local Trust policies[cite: 21, 32].")
