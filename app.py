@@ -47,13 +47,13 @@ with st.expander("Patient Criteria", expanded=True):
 # Risk Logic based on Section 3.0
 risk_level = "Low Risk"
 if bmi < 14 or days_starved > 15:
-    risk_level = "Extremely High Risk"
+    [cite_start]risk_level = "Extremely High Risk" # [cite: 59, 60]
 elif (bmi < 16 or weight_loss > 15 or days_starved > 10 or low_elec):
-    risk_level = "High Risk"
+    [cite_start]risk_level = "High Risk" # [cite: 48, 49, 50, 51]
 elif ( (bmi < 18.5) + (weight_loss > 10) + (days_starved > 5) + alcohol + meds ) >= 2:
-    risk_level = "High Risk"
+    [cite_start]risk_level = "High Risk" # [cite: 52]
 elif days_starved > 5:
-    risk_level = "At Risk"
+    [cite_start]risk_level = "At Risk" # [cite: 45]
 
 st.subheader(f"Calculated Risk: {risk_level}")
 
@@ -93,10 +93,10 @@ if analyte == "Potassium (K+)":
         st.warning("#### ⚠️ Clinical Action: Review ECG for Hypokalaemia")
         st.markdown("""
         **Look for the following specific changes:**
-        * **P-wave flattening** (or increased amplitude).
-        * **T-wave flattening** or inversion.
-        * **Prominent U-waves** (the characteristic sign).
-        * **ST-segment depression**.
+        * **P-wave flattening** (or increased amplitude)
+        * **T-wave flattening** or inversion
+        * **Prominent U-waves** (the characteristic sign)
+        * **ST-segment depression**
         """)
         st.write("")
         
@@ -112,9 +112,9 @@ if analyte == "Potassium (K+)":
         st.error("#### 🚨 Clinical Action: Review ECG for Hyperkalaemia")
         st.markdown("""
         **Look for the following specific changes:**
-        * **Tented (Peaked) T-waves** (narrow-based and tall).
-        * **P-wave flattening** or disappearance.
-        * **Widening of the QRS complex** (Warning: Imminent cardiac arrest).
+        * **Tented (Peaked) T-waves** (narrow-based and tall)
+        * **P-wave flattening** or disappearance
+        * **Widening of the QRS complex** (Warning: Imminent cardiac arrest)
         """)
         st.write("
 
@@ -127,7 +127,7 @@ elif analyte == "Magnesium (Mg)":
     if 0.1 <= val_mg < 0.5:
         [cite_start]st.error("**Treatment Advice:** Give 20mmol Magnesium Sulphate IV over 12 hours. Check serum every 12h[cite: 155, 156].")
     elif 0.5 <= val_mg < 0.7:
-        [cite_start]st.warning("**Treatment Advice:** 5ml Magnesium Hydroxide TDS orally until >0.7[cite: 153]. [cite_start]Check every 24h[cite: 154].")
+        [cite_start]st.warning("**Treatment Advice:** 5ml Magnesium Hydroxide TDS orally until >0.7. Check every 24h[cite: 153, 154].")
 
 # PHOSPHATE
 elif analyte == "Phosphate (PO4)":
@@ -135,9 +135,9 @@ elif analyte == "Phosphate (PO4)":
     if 0.1 <= val_p < 0.3:
         [cite_start]st.error("**Treatment Advice:** Give IV Sodium Glycerophosphate 20mmol over 8-12 hours. Check serum every 12h[cite: 137, 143].")
     elif 0.3 <= val_p < 0.5:
-        [cite_start]st.warning("**Treatment Advice:** If oral route suitable: 2 tablets Phosphate-Sandoz OD[cite: 131]. [cite_start]Otherwise: IV replacement[cite: 137].")
+        [cite_start]st.warning("**Treatment Advice:** If oral route suitable: 2 tablets Phosphate-Sandoz OD. Otherwise: IV replacement[cite: 131, 137].")
     elif 0.5 <= val_p < 0.7:
-        [cite_start]st.info("**Treatment Advice:** 1 tablet Phosphate-Sandoz OD[cite: 125]. [cite_start]Check serum every 24h[cite: 134].")
+        [cite_start]st.info("**Treatment Advice:** 1 tablet Phosphate-Sandoz OD. Check serum every 24h[cite: 125, 134].")
 
 # PARENTERAL NUTRITION & CLINICAL ADVICE
 st.divider()
@@ -149,4 +149,4 @@ st.markdown("""
 * [cite_start]**Renal Impairment:** Beware of normal K+/PO4 levels in dehydrated patients with renal failure[cite: 87].
 """)
 
-[cite_start]st.caption("Note: Always involve a Dietitian at the earliest opportunity[cite: 21, 32].")
+[cite_start]st.caption("Note: Always involve a Dietitian at the earliest opportunity[cite: 21].")
