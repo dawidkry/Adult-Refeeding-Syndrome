@@ -159,7 +159,7 @@ st.markdown("""
 
 st.divider()
 st.header("Step 4: Clinical Summary")
-patient_id = st.text_input("Patient Identifier (e.g., Hospital Number)")
+patient_id = st.text_input("Patient Initials")
 
 if st.button("Generate Summary"):
     summary = f"""
